@@ -67,6 +67,13 @@ namespace CMecanum {
     let MRL = 0
     let MRR = 0
 
+    //% block="wait %time sec"
+    //% block.loc.nl="wacht %time sec"
+    //% min.defl=1
+    export function wait(time: number) {
+        basic.pause(time * 1000)
+    }
+
     //% block="The %motor motor has been revolved"
     //% block.loc.nl="De motor %motor is omgedraaid"
     export function swapDirection(motor: Motors) {
