@@ -67,8 +67,8 @@ namespace CMecanum {
     let MRL = 0
     let MRR = 0
 
-    //% block="Swap the assembly of %motor"
-    //% block.loc.nl="Draai de montage van %motor om"
+    //% block="The %motor motor has been revolved"
+    //% block.loc.nl="De motor %motor is omgedraaid"
     export function swapDirection(motor: Motors) {
         SWAPASM[motor] = !SWAPASM[motor]
     }
