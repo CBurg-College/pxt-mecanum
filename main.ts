@@ -103,9 +103,9 @@ namespace CMecanum {
                 MRR = (swap[Motors.rearRight] ? -speed : steer)
             }
             else {
-                let steer = speed + speed * STEER / 100
-                MFL = (swap[Motors.frontLeft] ? -speed : steer)
-                MRL = (swap[Motors.rearLeft] ? -speed : steer)
+                let steer2 = speed + speed * STEER / 100
+                MFL = (swap[Motors.frontLeft] ? -speed : steer2)
+                MRL = (swap[Motors.rearLeft] ? -speed : steer2)
                 MFR = (swap[Motors.frontRight] ? -speed : speed)
                 MRR = (swap[Motors.rearRight] ? -speed : speed)
             }
