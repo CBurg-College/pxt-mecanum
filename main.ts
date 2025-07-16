@@ -19,32 +19,32 @@ namespace CMecanum {
     }
 
     export enum Direction {
-        // block="forward"
-        // block.loc.nl="vooruit"
+        //% block="forward"
+        //% block.loc.nl="vooruit"
         Forward,
-        // block="reverse"
-        // block.loc.nl="achteruit"
+        //% block="reverse"
+        //% block.loc.nl="achteruit"
         Reverse,
-        // block="to the left"
-        // block.loc.nl="naar links"
+        //% block="to the left"
+        //% block.loc.nl="naar links"
         Left,
-        // block="to the right"
-        // block.loc.nl="naar rechts"
+        //% block="to the right"
+        //% block.loc.nl="naar rechts"
         Right,
-        // block="anti clockwise"
-        // block.loc.nl="linksom"
+        //% block="anti clockwise"
+        //% block.loc.nl="linksom"
         AClockwise,
-        // block="clockwise"
-        // block.loc.nl="rechtsom"
+        //% block="clockwise"
+        //% block.loc.nl="rechtsom"
         Clockwise
     }
 
     export enum Steer {
-        // block="to the left"
-        // block.loc.nl="naar links"
+        //% block="to the left"
+        //% block.loc.nl="naar links"
         Left,
-        // block="to the right"
-        // block.loc.nl="naar rechts"
+        //% block="to the right"
+        //% block.loc.nl="naar rechts"
         Right
      }
 
@@ -76,7 +76,7 @@ namespace CMecanum {
     //% block="steer %bend \\% %dir"
     //% block.loc.nl="stuur %bend \\% %dir"
     //% bend.max=100 bend.min=0
-    export function steer(dir: Steer, bend: number) {
+    export function steer(bend: number, dir: Steer) {
         STEER = (dir == Steer.Left ? -bend : bend)
     }
 
