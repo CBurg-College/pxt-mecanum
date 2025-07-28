@@ -5,7 +5,7 @@
         "core": "*",
         "radio": "*",
         "microphone": "*",
-        "pxt-nezha": "github:elecfreaks/pxt-nezha#v1.3.9"
+        "pxt-nezhabrick": "github:cburg-college/pxt-nezhabrick#cee9736fc02d620cbf8cf133f021748eca3589ce"
     },
     "files": [
         "main.blocks",
@@ -16,7 +16,7 @@
         "test.ts"
     ],
     "targetVersions": {
-        "target": "8.0.8",
+        "target": "8.0.11",
         "targetId": "microbit"
     },
     "supportedTargets": [

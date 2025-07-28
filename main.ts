@@ -1,156 +1,105 @@
-//% color="#00CC00" icon="\uf1f9"
-//% block="Mecanum wheels"
-//% block.loc.nl="Mecanum wielen"
+enum Turn {
+    //% block="anticlockwise"
+    //% block.loc.nl="linksom"
+    Anticlockwise,
+    //% block="clockwise"
+    //% block.loc.nl="rechtsom"
+    Clockwise
+}
+
+enum Move {
+    //% block="forward"
+    //% block.loc.nl="voren"
+    Forward,
+    //% block="backward"
+    //% block.loc.nl="achteren"
+    Backward,
+    //% block="to the left"
+    //% block.loc.nl="links"
+    Left,
+    //% block="to the right"
+    //% block.loc.nl="rechts"
+    Right
+}
+
 namespace CMecanum {
 
-    export enum Motors {
-        //% block="front left"
-        //% block.loc.nl="links voor"
-        frontLeft,
-        //% block="front right"
-        //% block.loc.nl="rechts voor"
-        frontRight,
-        //% block="rear left"
-        //% block.loc.nl="links achter"
-        rearLeft,
-        //% block="rear right"
-        //% block.loc.nl="rechts achter"
-        rearRight
+    /* calibrated values for wheel configuration:
+                \\ --- //
+                   ---
+                   ---
+                // --- \\
+    */
+    let SF = [17, 15, 15, 15]      // speed forward
+    let SB = [-17, -15, -15, -15]  // speed backward
+    let SL = [-18, 18, 13, -15]    // speed left
+    let SR = [22, -18, -15, 15]    // speed right
+    let SC = [15, -15, 15, -15]    // speed clockwise
+    let SA = [-15, 15, -15, 15]    // speed anticlockwise
+    let SPEED = [0, 0, 0, 0]
+
+    export function calibrateMove(move: Move, frontleft: number, frontright: number, rearleft: number, rearright: number) {
+        switch (move) {
+            case Move.Forward:
+                SF[0] = frontleft; SF[1] = frontright;
+                SF[2] = rearleft; SF[3] = rearright;
+                break;
+            case Move.Backward:
+                SB[0] = frontleft; SB[1] = frontright;
+                SB[2] = rearleft; SB[3] = rearright;
+                break;
+            case Move.Left:
+                SC[0] = frontleft; SC[1] = frontright;
+                SC[2] = rearleft; SC[3] = rearright;
+                break;
+            case Move.Right:
+                SA[0] = frontleft; SA[1] = frontright;
+                SA[2] = rearleft; SA[3] = rearright;
+                break;
+        }
     }
 
-    export enum Direction {
-        //% block="forward"
-        //% block.loc.nl="vooruit"
-        Forward,
-        //% block="reverse"
-        //% block.loc.nl="achteruit"
-        Reverse,
-        //% block="to the left"
-        //% block.loc.nl="naar links"
-        Left,
-        //% block="to the right"
-        //% block.loc.nl="naar rechts"
-        Right,
-        //% block="anti clockwise"
-        //% block.loc.nl="linksom"
-        AClockwise,
-        //% block="clockwise"
-        //% block.loc.nl="rechtsom"
-        Clockwise
+    export function calibrateTurn(turn: Turn, frontleft: number, frontright: number, rearleft: number, rearright: number) {
+        switch (turn) {
+            case Turn.Clockwise:
+                SC[0] = frontleft; SC[1] = frontright;
+                SC[2] = rearleft; SC[3] = rearright;
+                break;
+            case Turn.Anticlockwise:
+                SA[0] = frontleft; SA[1] = frontright;
+                SA[2] = rearleft; SA[3] = rearright;
+                break;
+        }
     }
 
-    export enum Steer {
-        //% block="to the left"
-        //% block.loc.nl="naar links"
-        Left,
-        //% block="to the right"
-        //% block.loc.nl="naar rechts"
-        Right
-     }
-
-    let STEER = 0
-
-    // swap the motor direction because of the assembly
-    let SWAPASM = [false, false, false, false]
-
-    // swap the motor speed based on the direction
-    //              mfl    mfr    mrl    mrr
-    let SWAPFRW = [false, false, true , true ]
-    let SWAPREV = [true , true , false, false]
-    let SWAPLFT = [true , true , true , true ]
-    let SWAPRGT = [false, false, false, false]
-    let SWAPCLW = [false, true , true , false]
-    let SWAPACW = [true , false, false, true ]
-
-    let MFL = 0
-    let MFR = 0
-    let MRL = 0
-    let MRR = 0
-
-    //% block="wait %time sec"
-    //% block.loc.nl="wacht %time sec"
-    //% min.defl=1
-    export function wait(time: number) {
-        basic.pause(time * 1000)
+    export function init() {
+        Nezha.setFrontLeftMotor(Motor.M4, false)
+        Nezha.setFrontRightMotor(Motor.M3, true)
+        Nezha.setRearLeftMotor(Motor.M2, false)
+        Nezha.setRearRightMotor(Motor.M1, true)
     }
 
-    //% block="The %motor motor has been revolved"
-    //% block.loc.nl="De motor %motor is omgedraaid"
-    export function swapDirection(motor: Motors) {
-        SWAPASM[motor] = !SWAPASM[motor]
-    }
-
-    //% block="steer %bend \\% %dir"
-    //% block.loc.nl="stuur %bend \\% %dir"
-    //% bend.max=100 bend.min=0
-    export function steer(bend: number, dir: Steer) {
-        STEER = (dir == Steer.Left ? -bend : bend)
-    }
-
-    //% block="run %dir at %speed \\%"
-    //% block.loc.nl="rijd %dir met %speed \\% snelheid"
-    //% speed.max=100 speed.min=0
-    export function setDriving(dir: Direction, speed: number) {
-        let swap = [false, false, false, false]
+    export function move(dir: Move) {
         switch (dir) {
-            case Direction.Forward: swap = SWAPFRW; break;
-            case Direction.Reverse: swap = SWAPREV; break;
-            case Direction.Left: swap = SWAPLFT; break;
-            case Direction.Right: swap = SWAPRGT; break;
-            case Direction.Clockwise: swap = SWAPCLW; break;
-            case Direction.AClockwise: swap = SWAPACW; break;
+            case Move.Forward:
+                Nezha.setFourWheelSpeed(SF[0], SF[1], SF[2], SF[3]);
+                break;
+            case Move.Backward:
+                Nezha.setFourWheelSpeed(SB[0], SB[1], SB[2], SB[3]);
+                break;
+            case Move.Left:
+                Nezha.setFourWheelSpeed(SL[0], SL[1], SL[2], SL[3]);
+                break;
+            case Move.Right:
+                Nezha.setFourWheelSpeed(SR[0], SR[1], SR[2], SR[3]);
+                break;
         }
-
-        if ((STEER != 0) && (dir == Direction.Forward || dir == Direction.Reverse)) {
-            if (STEER > 0) {
-                let steer = speed - speed * STEER / 100
-                MFL = (swap[Motors.frontLeft] ? -speed : speed)
-                MRL = (swap[Motors.rearLeft] ? -speed : speed)
-                MFR = (swap[Motors.frontRight] ? -speed : steer)
-                MRR = (swap[Motors.rearRight] ? -speed : steer)
-            }
-            else {
-                let steer2 = speed + speed * STEER / 100
-                MFL = (swap[Motors.frontLeft] ? -speed : steer2)
-                MRL = (swap[Motors.rearLeft] ? -speed : steer2)
-                MFR = (swap[Motors.frontRight] ? -speed : speed)
-                MRR = (swap[Motors.rearRight] ? -speed : speed)
-            }
-        }
-        else {
-            MFL = (swap[Motors.frontLeft] ? -speed : speed)
-            MRL = (swap[Motors.rearLeft] ? -speed : speed)
-            MFR = (swap[Motors.frontRight] ? -speed : speed)
-            MRR = (swap[Motors.rearRight] ? -speed : speed)
-        }
-
-        if (SWAPASM[Motors.frontLeft]) MFL = -MFL
-        if (SWAPASM[Motors.frontRight]) MFR = -MFR
-        if (SWAPASM[Motors.rearLeft]) MRL = -MRL
-        if (SWAPASM[Motors.rearRight]) MRR = -MRR
     }
 
-    //% block="speed front left wheel"
-    //% block.loc.nl="snelheid linker voorwiel"
-    export function frontLeft(): number {
-        return MFL
-    }
-
-    //% block="speed front right wheel"
-    //% block.loc.nl="snelheid rechter voorwiel"
-    export function frontRight(): number {
-        return MFR
-    }
-
-    //% block="speed rear left wheel"
-    //% block.loc.nl="snelheid linker achterwiel"
-    export function rearLeft(): number {
-        return MRL
-    }
-
-    //% block="speed rear right wheel"
-    //% block.loc.nl="snelheid rechter achterwiel"
-    export function rearRight(): number {
-        return MRR
+    export function turn(dir: Turn) {
+        if (dir == Turn.Clockwise)
+            Nezha.setFourWheelSpeed(SC[0], SC[1], SC[2], SC[3])
+        else
+            Nezha.setFourWheelSpeed(SA[0], SA[1], SA[2], SA[3])
     }
 }
