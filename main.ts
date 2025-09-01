@@ -1,12 +1,3 @@
-enum Turn {
-    //% block="anticlockwise"
-    //% block.loc.nl="linksom"
-    Anticlockwise,
-    //% block="clockwise"
-    //% block.loc.nl="rechtsom"
-    Clockwise
-}
-
 enum Move {
     //% block="forward"
     //% block.loc.nl="voren"
@@ -59,47 +50,40 @@ namespace CMecanum {
         }
     }
 
-    export function calibrateTurn(turn: Turn, frontleft: number, frontright: number, rearleft: number, rearright: number) {
-        switch (turn) {
-            case Turn.Clockwise:
+    export function calibrateRotation(spin: Spin, frontleft: number, frontright: number, rearleft: number, rearright: number) {
+        switch (spin) {
+            case Spin.Clockwise:
                 SC[0] = frontleft; SC[1] = frontright;
                 SC[2] = rearleft; SC[3] = rearright;
                 break;
-            case Turn.Anticlockwise:
+            case Spin.AntiClockwise:
                 SA[0] = frontleft; SA[1] = frontright;
                 SA[2] = rearleft; SA[3] = rearright;
                 break;
         }
     }
 
-    export function init() {
-        Nezha.setFrontLeftMotor(Motor.M4, false)
-        Nezha.setFrontRightMotor(Motor.M3, true)
-        Nezha.setRearLeftMotor(Motor.M2, false)
-        Nezha.setRearRightMotor(Motor.M1, true)
-    }
-
     export function move(dir: Move) {
         switch (dir) {
             case Move.Forward:
-                Nezha.setFourWheelSpeed(SF[0], SF[1], SF[2], SF[3]);
+                Nezha.fourWheelSpeed(SF[0], SF[1], SF[2], SF[3]);
                 break;
             case Move.Backward:
-                Nezha.setFourWheelSpeed(SB[0], SB[1], SB[2], SB[3]);
+                Nezha.fourWheelSpeed(SB[0], SB[1], SB[2], SB[3]);
                 break;
             case Move.Left:
-                Nezha.setFourWheelSpeed(SL[0], SL[1], SL[2], SL[3]);
+                Nezha.fourWheelSpeed(SL[0], SL[1], SL[2], SL[3]);
                 break;
             case Move.Right:
-                Nezha.setFourWheelSpeed(SR[0], SR[1], SR[2], SR[3]);
+                Nezha.fourWheelSpeed(SR[0], SR[1], SR[2], SR[3]);
                 break;
         }
     }
 
-    export function turn(dir: Turn) {
-        if (dir == Turn.Clockwise)
-            Nezha.setFourWheelSpeed(SC[0], SC[1], SC[2], SC[3])
+    export function rotate(rotation: Spin) {
+        if (rotation == Spin.Clockwise)
+            Nezha.fourWheelSpeed(SC[0], SC[1], SC[2], SC[3])
         else
-            Nezha.setFourWheelSpeed(SA[0], SA[1], SA[2], SA[3])
+            Nezha.fourWheelSpeed(SA[0], SA[1], SA[2], SA[3])
     }
 }
