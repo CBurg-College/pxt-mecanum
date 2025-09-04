@@ -13,7 +13,7 @@ enum Move {
     Right
 }
 
-namespace CMecanum {
+namespace Mecanum {
 
     /* calibrated values for wheel configuration:
                 M3 \\ --- // M2
@@ -27,7 +27,7 @@ namespace CMecanum {
     let SR = [21, -21, -20, 22]    // speed right
     let SC = [-20, -20, -20, -20]  // speed clockwise
     let SA = [20, 20, 20, 20]      // speed anticlockwise
-    let SPEED = [0, 0, 0, 0]
+    let STOP = [0, 0, 0, 0]
 
     export function calibrateMove(move: Move, frontleft: number, frontright: number, rearleft: number, rearright: number) {
         switch (move) {
@@ -85,5 +85,9 @@ namespace CMecanum {
             NezhaPro.fourWheelSpeed(SC[0], SC[1], SC[2], SC[3])
         else
             NezhaPro.fourWheelSpeed(SA[0], SA[1], SA[2], SA[3])
+    }
+
+    export function stop() {
+        NezhaPro.fourWheelStop()
     }
 }
