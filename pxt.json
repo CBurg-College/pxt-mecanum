@@ -5,7 +5,7 @@
         "core": "*",
         "radio": "*",
         "microphone": "*",
-        "pxt-nezhapro": "github:CBurg-College/pxt-nezhapro#c547a2b8fc1566b441acb65b60d70b80c69ff8dc"
+        "pxt-nezhapro": "github:cburg-college/pxt-nezhapro#ec342c8723d1a88a4051cbce97f254a535852652"
     },
     "files": [
         "main.blocks",
