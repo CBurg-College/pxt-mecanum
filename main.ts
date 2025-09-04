@@ -16,36 +16,36 @@ enum Move {
 namespace CMecanum {
 
     /* calibrated values for wheel configuration:
-                \\ --- //
-                   ---
-                   ---
-                // --- \\
+                M3 \\ --- // M2
+                      ---
+                      ---
+                M4 // --- \\ M1
     */
-    let SF = [17, 15, 15, 15]      // speed forward
-    let SB = [-17, -15, -15, -15]  // speed backward
-    let SL = [-18, 18, 13, -15]    // speed left
-    let SR = [22, -18, -15, 15]    // speed right
-    let SC = [15, -15, 15, -15]    // speed clockwise
-    let SA = [-15, 15, -15, 15]    // speed anticlockwise
+    let SF = [20, 20, -19, -20]    // speed forward
+    let SB = [-19, -19, 20, 20]    // speed backward
+    let SL = [-20, 21, 20, -19]    // speed left
+    let SR = [21, -21, -20, 22]    // speed right
+    let SC = [-20, -20, -20, -20]  // speed clockwise
+    let SA = [20, 20, 20, 20]      // speed anticlockwise
     let SPEED = [0, 0, 0, 0]
 
     export function calibrateMove(move: Move, frontleft: number, frontright: number, rearleft: number, rearright: number) {
         switch (move) {
             case Move.Forward:
-                SF[0] = frontleft; SF[1] = frontright;
-                SF[2] = rearleft; SF[3] = rearright;
+                SF[0] = rearright; SF[1] = frontright;
+                SF[2] = frontleft; SF[3] = rearleft;
                 break;
             case Move.Backward:
-                SB[0] = frontleft; SB[1] = frontright;
-                SB[2] = rearleft; SB[3] = rearright;
+                SB[0] = rearright; SB[1] = frontright;
+                SB[2] = frontleft; SB[3] = rearleft;
                 break;
             case Move.Left:
-                SC[0] = frontleft; SC[1] = frontright;
-                SC[2] = rearleft; SC[3] = rearright;
+                SL[0] = rearright; SL[1] = frontright;
+                SL[2] = frontleft; SL[3] = rearleft;
                 break;
             case Move.Right:
-                SA[0] = frontleft; SA[1] = frontright;
-                SA[2] = rearleft; SA[3] = rearright;
+                SR[0] = rearright; SR[1] = frontright;
+                SR[2] = frontleft; SR[3] = rearleft;
                 break;
         }
     }
@@ -53,12 +53,12 @@ namespace CMecanum {
     export function calibrateRotation(spin: Spin, frontleft: number, frontright: number, rearleft: number, rearright: number) {
         switch (spin) {
             case Spin.Clockwise:
-                SC[0] = frontleft; SC[1] = frontright;
-                SC[2] = rearleft; SC[3] = rearright;
+                SC[0] = rearright; SC[1] = frontright;
+                SC[2] = frontleft; SC[3] = rearleft;
                 break;
             case Spin.AntiClockwise:
-                SA[0] = frontleft; SA[1] = frontright;
-                SA[2] = rearleft; SA[3] = rearright;
+                SA[0] = rearright; SA[1] = frontright;
+                SA[2] = frontleft; SA[3] = rearleft;
                 break;
         }
     }
@@ -66,24 +66,24 @@ namespace CMecanum {
     export function move(dir: Move) {
         switch (dir) {
             case Move.Forward:
-                Nezha.fourWheelSpeed(SF[0], SF[1], SF[2], SF[3]);
+                NezhaPro.fourWheelSpeed(SF[0], SF[1], SF[2], SF[3]);
                 break;
             case Move.Backward:
-                Nezha.fourWheelSpeed(SB[0], SB[1], SB[2], SB[3]);
+                NezhaPro.fourWheelSpeed(SB[0], SB[1], SB[2], SB[3]);
                 break;
             case Move.Left:
-                Nezha.fourWheelSpeed(SL[0], SL[1], SL[2], SL[3]);
+                NezhaPro.fourWheelSpeed(SL[0], SL[1], SL[2], SL[3]);
                 break;
             case Move.Right:
-                Nezha.fourWheelSpeed(SR[0], SR[1], SR[2], SR[3]);
+                NezhaPro.fourWheelSpeed(SR[0], SR[1], SR[2], SR[3]);
                 break;
         }
     }
 
     export function rotate(rotation: Spin) {
         if (rotation == Spin.Clockwise)
-            Nezha.fourWheelSpeed(SC[0], SC[1], SC[2], SC[3])
+            NezhaPro.fourWheelSpeed(SC[0], SC[1], SC[2], SC[3])
         else
-            Nezha.fourWheelSpeed(SA[0], SA[1], SA[2], SA[3])
+            NezhaPro.fourWheelSpeed(SA[0], SA[1], SA[2], SA[3])
     }
 }
